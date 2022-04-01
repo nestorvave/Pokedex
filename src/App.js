@@ -5,9 +5,11 @@ import Pokemon from "./components/Pokemon";
 
 function App() {
   const [pokemons, setPokemons] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [pokeType, setPokeType] = useState("");
 
   useEffect(() => {
-    const request = async () => {
+    const list = async () => {
       const data = await fetch("https://pokeapi.co/api/v2/pokemon?limit=150");
       const resp = await data.json();
 
@@ -15,11 +17,53 @@ function App() {
         setPokemons(resp.results);
       }
     };
-    request();
+    list();
+
+    const typesList = async () => {
+      const data = await fetch("https://pokeapi.co/api/v2/type?limit=3");
+      const resp = await data.json();
+
+      if (resp.results.length) {
+        setTypes(resp.results);
+      }
+    };
+    typesList();
   }, []);
+
+  useEffect(() => {
+    if (pokeType) {
+      const typesList = async () => {
+        const data = await fetch(`https://pokeapi.co/api/v2/type/${pokeType}`);
+        const resp = await data.json();
+        console.log(resp)
+        // if (resp.results.length) {
+        //   setTypes(resp.results);
+        // }
+        const pokeTypes = resp.pokemon.map( item =>{
+
+          const {pokemon: {name, url}} =item
+
+          return {name, url}
+        })
+        setPokemons(pokeTypes)
+
+      };
+      typesList();
+      
+    }
+  
+    
+  }, [pokeType])
+  
 
   return (
     <BrowserRouter>
+    <>
+        <header>
+          {
+            types.map( type => <button  onClick={()=>setPokeType(type.name) } type="button" key={type.name} > {type.name} </button> )
+          }
+        </header>
       <main className="container">
         <nav>
           {pokemons.map((pokemon) => {
@@ -36,9 +80,9 @@ function App() {
             {pokemons.map((pokemon) => {
               return (
                 <Route
-                  key={`r_${pokemon.name}`}
-                  exact
-                  path={`/${pokemon.name}`}
+                key={`r_${pokemon.name}`}
+                exact
+                path={`/${pokemon.name}`}
                 >
                   <Pokemon name={pokemon.name} />
                 </Route>
@@ -47,6 +91,7 @@ function App() {
           </Switch>
         </article>
       </main>
+            </>
     </BrowserRouter>
   );
 }
