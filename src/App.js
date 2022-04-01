@@ -5,13 +5,16 @@ import './App.css'
 function App() {
   const [poke, setPoke] = useState(null);
 
-  useEffect;
-  useEffect(() => {
-    fetch("https://pokeapi.co/api/v2/pokemon")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
+
+  useEffect( () => {
+    
+      const request = async ()=>{
+        const data = await fetch("https://pokeapi.co/api/v2/pokemon")
+        const resp= await data.json()
+        return resp
+      }
+      const result = request()
+      
   }, []);
 
   return (
