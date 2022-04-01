@@ -7,4 +7,5 @@ html{
     grid-template-columns: 35% 1fr;
     max-width: 960px;
     gap: 5px;
+    margin: 16px auto;
 }
